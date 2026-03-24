@@ -2,6 +2,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import joblib
+import os
 
 st.set_page_config(
     page_title="Heart Disease Risk Predictor",
@@ -11,8 +12,8 @@ st.set_page_config(
 
 @st.cache_resource
 def load_model():
-    import os
-   return joblib.load(os.path.join(os.path.dirname(__file__), "heart_disease_model.pkl"))
+    model_path = os.path.join(os.path.dirname(__file__), "heart_disease_model.pkl")
+    return joblib.load(model_path)
 
 model = load_model()
 
@@ -43,7 +44,6 @@ with col2:
 
 st.divider()
 
-# Encode inputs exactly as done during training
 row = pd.DataFrame([{
     'Age': Age,
     'Sex': 1 if Sex == 'M' else 0,
@@ -56,7 +56,6 @@ row = pd.DataFrame([{
     'ST_Slope': ['Down', 'Flat', 'Up'].index(ST_Slope),
 }])
 
-# Apply same scaling as training
 row['Oldpeak'] = (row['Oldpeak'] - (-2.6)) / (6.2 - (-2.6))
 row['Age'] = (row['Age'] - 53.5) / 9.4
 row['Cholesterol'] = (row['Cholesterol'] - 198.8) / 109.4
